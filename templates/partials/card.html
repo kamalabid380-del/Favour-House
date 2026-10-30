@@ -1,0 +1,16 @@
+{% load humanize %}
+<a class="card" href="{{ p.get_absolute_url }}">
+  <div class="card__media">
+    {% if p.image %}
+      <img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy">
+    {% endif %}
+    <span class="card__tag">{{ ui.view }}</span>
+  </div>
+  <div class="card__meta">
+    <div class="card__text">
+      <h3 class="card__name">{{ p.name }}</h3>
+      {% if p.category %}<span class="card__cat">{{ p.category.name }}</span>{% endif %}
+    </div>
+    <span class="card__price">{{ site.currency }}{{ p.price|floatformat:0|intcomma }}</span>
+  </div>
+</a>

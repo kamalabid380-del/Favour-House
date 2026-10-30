@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block body_class %}home{% endblock %}
+{% block title %}{{ site.brand_name }} — {{ site.tagline }}{% endblock %}
+
+{% block main %}
+
+{% if slides %}
+<section class="hero" data-hero data-interval="7200" aria-label="{{ ui.hero }}">
+  <div class="hero__stage" data-hero-stage>
+    {% for slide in slides %}
+      <figure class="hero__slide{% if forloop.first %} is-active{% endif %}" style="--zoom:{{ slide.zoom_strength }};--zoom-sec:{{ slide.zoom_seconds }}s">
+        {% if slide.image %}
+          <img src="{{ slide.image.url }}" alt="{{ slide.title }}" {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+        {% endif %}
+      </figure>
+    {% endfor %}
+    <div class="hero__veil"></div>
+  </div>
+
+  <div class="hero__copy" data-hero-copy>
+    <p class="eyebrow" data-hero-eyebrow>{{ slides.0.eyebrow }}</p>
+    <h1 class="hero__title" data-hero-title>{{ slides.0.title }}</h1>
+    <p class="hero__sub" data-hero-sub>{{ slides.0.subtitle }}</p>
+    {% if slides.0.cta_label %}
+      <a class="btn" data-hero-cta href="{{ slides.0.cta_url }}">{{ slides.0.cta_label }}</a>
+    {% else %}
+      <a class="btn is-hidden" data-hero-cta href="#"></a>
+    {% endif %}
+  </div>
+
+  <div class="hero__ui">
+    <span class="hero__count"><span data-hero-index>01</span><span class="hero__slash"></span><span>{{ slides|length }}</span></span>
+    <span class="hero__bar"><span data-hero-progress></span></span>
+    <span class="hero__arrows">
+      <button class="arrow" type="button" data-hero-prev aria-label="{{ ui.prev }}">&larr;</button>
+      <button class="arrow" type="button" data-hero-next aria-label="{{ ui.next }}">&rarr;</button>
+    </span>
+  </div>
+
+  <span class="hero__scroll">{{ ui.scroll }}<i></i></span>
+</section>
+{{ hero_payload|json_script:"hero-data" }}
+{% else %}
+<section class="hero hero--bare">
+  <div class="hero__copy">
+    <p class="eyebrow">{{ site.tagline }}</p>
+    <h1 class="hero__title">{{ site.brand_name }}</h1>
+    <a class="btn" href="{% url 'shop' %}">{{ ui.shop }}</a>
+  </div>
+</section>
+{% endif %}
+
+{% if site.announcement %}
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track" data-marquee>
+    <span class="ticker__item">{{ site.announcement }}</span>
+    <span class="ticker__item">{{ site.announcement }}</span>
+    <span class="ticker__item">{{ site.announcement }}</span>
+    <span class="ticker__item">{{ site.announcement }}</span>
+  </div>
+</div>
+{% endif %}
+
+{% if featured %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div data-reveal>
+        <p class="eyebrow">{{ ui.shop }}</p>
+        <h2 class="sec-title">{{ site.shop_heading }}</h2>
+      </div>
+      <a class="link-more" href="{% url 'shop' %}" data-reveal style="--i:2">
+        {{ ui.discover }}<span>&rarr;</span>
+      </a>
+    </div>
+    <div class="grid-3 grid--pieces">
+      {% for p in featured %}
+        <div data-reveal style="--i:{{ forloop.counter0 }}">
+          {% include "partials/card.html" with p=p %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% for section in sections %}
+<section class="section section--split">
+  <div class="wrap">
+    <div class="split{% if section.layout == 'right' %} split--rev{% endif %}">
+      <div class="split__media" data-reveal>
+        {% if section.image %}
+          <img src="{{ section.image.url }}" alt="{{ section.heading }}" loading="lazy" data-parallax="7">
+        {% endif %}
+      </div>
+      <div class="split__text" data-reveal style="--i:1">
+        <p class="eyebrow">{{ section.eyebrow }}</p>
+        <h2>{{ section.heading }}</h2>
+        <p>{{ section.body }}</p>
+        {% if section.link_label %}
+          <a class="link-more" href="{{ section.link_url }}">{{ section.link_label }}<span>&rarr;</span></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+{% if looks %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div data-reveal>
+        <p class="eyebrow">{{ ui.collections }}</p>
+        <h2 class="sec-title">{{ ui.lookbook }}</h2>
+      </div>
+      <a class="link-more" href="{% url 'shop' %}" data-reveal style="--i:2">
+        {{ ui.all }}<span>&rarr;</span>
+      </a>
+    </div>
+    <div class="looks">
+      {% for c in looks %}
+        <a class="look" href="{{ c.get_absolute_url }}" data-reveal style="--i:{{ forloop.counter0 }}">
+          {% if c.cover_image %}
+            <img src="{{ c.cover_image.url }}" alt="{{ c.name }}" loading="lazy">
+          {% endif %}
+          <span class="look__veil"></span>
+          <span class="look__label">
+            <span class="look__name">{{ c.name }}</span>
+            <span class="look__cta">{{ ui.explore }} &rarr;</span>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if stories %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div data-reveal>
+        <p class="eyebrow">{{ site.journal_eyebrow }}</p>
+        <h2 class="sec-title">{{ site.journal_heading }}</h2>
+      </div>
+      <a class="link-more" href="{% url 'journal' %}" data-reveal style="--i:2">
+        {{ ui.read }}<span>&rarr;</span>
+      </a>
+    </div>
+    <div class="grid-3">
+      {% for post in stories %}
+        <a class="story" href="{{ post.get_absolute_url }}" data-reveal style="--i:{{ forloop.counter0 }}">
+          <span class="story__media">
+            {% if post.cover_image %}
+              <img src="{{ post.cover_image.url }}" alt="{{ post.title }}" loading="lazy">
+            {% endif %}
+          </span>
+          <span class="story__date">{{ post.published_on|date:"j F Y" }}</span>
+          <span class="story__title">{{ post.title }}</span>
+          <span class="story__excerpt">{{ post.excerpt }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if site.closing_heading %}
+<section class="closing" data-word="{{ site.brand_name }}">
+  <div class="wrap closing__inner">
+    <div data-reveal>
+      <p class="eyebrow">{{ site.closing_eyebrow }}</p>
+      <h2>{{ site.closing_heading }}</h2>
+    </div>
+    <div data-reveal style="--i:1">
+      <p>{{ site.closing_body }}</p>
+      {% if site.contact_email %}
+        <a class="btn btn--ghost" href="mailto:{{ site.contact_email }}">{{ ui.enquire }}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

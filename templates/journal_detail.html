@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block body_class %}page{% endblock %}
+{% block title %}{{ post.title }} — {{ site.brand_name }}{% endblock %}
+
+{% block main %}
+<article class="post">
+  <header class="post__head wrap">
+    <a class="pdp__back" href="{% url 'journal' %}">&larr; {{ ui.journal }}</a>
+    <p class="eyebrow" data-reveal>{{ post.published_on|date:"j F Y" }}</p>
+    <h1 data-reveal style="--i:1">{{ post.title }}</h1>
+    {% if post.excerpt %}<p class="post__excerpt" data-reveal style="--i:2">{{ post.excerpt }}</p>{% endif %}
+  </header>
+
+  {% if post.cover_image %}
+    <div class="post__cover wrap" data-reveal>
+      <img src="{{ post.cover_image.url }}" alt="{{ post.title }}">
+    </div>
+  {% endif %}
+
+  <div class="post__body wrap">
+    <div class="prose" data-reveal>
+      {{ post.body|linebreaks }}
+    </div>
+  </div>
+</article>
+
+{% if more %}
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title" data-reveal>{{ ui.more }}</h2>
+      <a class="link-more" href="{% url 'journal' %}" data-reveal>{{ ui.read }}<span>&rarr;</span></a>
+    </div>
+    <div class="grid-3">
+      {% for item in more %}
+        <a class="story" href="{{ item.get_absolute_url }}" data-reveal style="--i:{{ forloop.counter0 }}">
+          <span class="story__media">
+            {% if item.cover_image %}
+              <img src="{{ item.cover_image.url }}" alt="{{ item.title }}" loading="lazy">
+            {% endif %}
+          </span>
+          <span class="story__date">{{ item.published_on|date:"j F Y" }}</span>
+          <span class="story__title">{{ item.title }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

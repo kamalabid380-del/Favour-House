@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block body_class %}page{% endblock %}
+{% block title %}{{ site.shop_heading|default:site.brand_name }} — {{ site.brand_name }}{% endblock %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal>{{ site.shop_eyebrow }}</p>
+    <h1 data-reveal style="--i:1">{% if active_category %}{{ active_category.name }}{% else %}{{ site.shop_heading }}{% endif %}</h1>
+    <p class="page-head__intro" data-reveal style="--i:2">
+      {% if active_category %}{{ active_category.intro }}{% else %}{{ site.shop_intro }}{% endif %}
+    </p>
+  </div>
+</section>
+
+<section class="shop">
+  <div class="wrap">
+    <div class="pills" data-pills>
+      <button class="pill{% if active_filter == 'all' %} is-active{% endif %}" type="button" data-filter="all">{{ ui.all }}</button>
+      {% for c in categories %}
+        <button class="pill{% if active_filter == c.slug %} is-active{% endif %}" type="button" data-filter="{{ c.slug }}">{{ c.name }}</button>
+      {% endfor %}
+    </div>
+
+    <p class="shop__meta">
+      <span data-count data-pieces="{{ ui.pieces }}">{{ products|length }} {{ ui.pieces }}</span>
+    </p>
+
+    <div class="grid-3 grid--pieces" data-grid>
+      {% for p in products %}
+        <div class="grid__item" data-product data-category="{{ p.category.slug }}">
+          {% include "partials/card.html" with p=p %}
+        </div>
+      {% empty %}
+        <p class="empty">{{ ui.nothing }}</p>
+      {% endfor %}
+    </div>
+
+    <p class="empty" data-empty hidden>{{ ui.nothing }}</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.classList.add("js");</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site.brand_name }} — {{ site.tagline }}{% endblock %}</title>
+  <meta name="description" content="{{ site.meta_description }}">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="alternate icon" href="{% static 'img/favicon.ico' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <div class="cursor" data-cursor aria-hidden="true"></div>
+  <a class="skip" href="#main">{{ ui.skip }}</a>
+
+  <header class="head{% if hero %} head--over{% endif %}" data-head>
+    <div class="head__inner">
+      <div class="head__left">
+        <button class="burger" type="button" data-menu-open aria-label="{{ ui.menu }}" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+        <nav class="head__nav" aria-label="Primary">
+          {% for link in nav_links %}
+            {% if link.show_in_header %}
+              <a href="{{ link.url }}">{{ link.label }}</a>
+            {% endif %}
+          {% endfor %}
+        </nav>
+      </div>
+
+      <a class="head__brand" href="{% url 'home' %}">
+        {% if site.logo %}
+          <img src="{{ site.logo.url }}" alt="{{ site.brand_name }}">
+        {% else %}
+          {{ site.brand_name }}
+        {% endif %}
+      </a>
+
+      <div class="head__right">
+        {% if site.contact_email %}
+          <a class="head__enquire" href="mailto:{{ site.contact_email }}">{{ ui.enquire }}</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <div class="menu" data-menu aria-hidden="true">
+    <div class="menu__top">
+      <span class="menu__brand">{{ site.brand_name }}</span>
+      <button class="menu__close" type="button" data-menu-close aria-label="{{ ui.close }}">
+        <span></span><span></span>
+      </button>
+    </div>
+    <nav class="menu__nav" aria-label="Mobile">
+      {% for link in nav_links %}
+        {% if link.show_in_header %}
+          <a href="{{ link.url }}" style="--i:{{ forloop.counter0 }}">{{ link.label }}</a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    <div class="menu__foot">
+      {% if site.contact_email %}<a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a>{% endif %}
+      {% if site.contact_phone %}<a href="tel:{{ site.contact_phone }}">{{ site.contact_phone }}</a>{% endif %}
+      {% if site.instagram_url %}<a href="{{ site.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+    </div>
+  </div>
+
+  <main id="main">
+    {% block main %}{% endblock %}
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot__grid">
+        <div>
+          <p class="foot__brand">{{ site.brand_name }}</p>
+          <p class="foot__tag">{{ site.tagline }}</p>
+        </div>
+        <div class="foot__col">
+          <h4>{{ ui.shop }}</h4>
+          {% for link in nav_links %}
+            {% if link.show_in_footer %}
+              <a href="{{ link.url }}">{{ link.label }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="foot__col">
+          <h4>{{ ui.contact }}</h4>
+          {% if site.contact_email %}<a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a>{% endif %}
+          {% if site.contact_phone %}<a href="tel:{{ site.contact_phone }}">{{ site.contact_phone }}</a>{% endif %}
+          {% if site.address %}<span>{{ site.address }}</span>{% endif %}
+          {% if site.instagram_url %}<a href="{{ site.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+          {% if site.pinterest_url %}<a href="{{ site.pinterest_url }}" target="_blank" rel="noopener">Pinterest</a>{% endif %}
+        </div>
+      </div>
+
+      <p class="foot__word" aria-hidden="true" data-reveal>{{ site.brand_name }}</p>
+
+      <div class="foot__bottom">
+        <span>© {% now "Y" %} {{ site.brand_name }}</span>
+        <span>{{ site.footer_note }}</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/site.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

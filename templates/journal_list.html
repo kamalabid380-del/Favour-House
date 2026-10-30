@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block body_class %}page{% endblock %}
+{% block title %}{{ site.journal_heading|default:ui.journal }} — {{ site.brand_name }}{% endblock %}
+
+{% block main %}
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal>{{ site.journal_eyebrow }}</p>
+    <h1 data-reveal style="--i:1">{{ site.journal_heading }}</h1>
+    <p class="page-head__intro" data-reveal style="--i:2">{{ site.journal_intro }}</p>
+  </div>
+</section>
+
+<section class="section section--journal">
+  <div class="wrap">
+    <div class="grid-3">
+      {% for post in posts %}
+        <a class="story" href="{{ post.get_absolute_url }}" data-reveal style="--i:{{ forloop.counter0 }}">
+          <span class="story__media">
+            {% if post.cover_image %}
+              <img src="{{ post.cover_image.url }}" alt="{{ post.title }}" loading="lazy">
+            {% endif %}
+          </span>
+          <span class="story__date">{{ post.published_on|date:"j F Y" }}</span>
+          <span class="story__title">{{ post.title }}</span>
+          <span class="story__excerpt">{{ post.excerpt }}</span>
+        </a>
+      {% empty %}
+        <p class="empty">{{ ui.nothing }}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block body_class %}page{% endblock %}
+{% block title %}{{ product.name }} — {{ site.brand_name }}{% endblock %}
+
+{% block main %}
+<article class="pdp" data-pdp>
+  <div class="pdp__media">
+    <div class="pdp__viewer" data-viewer>
+      {% if images %}
+        <img src="{{ images.0.url }}" alt="{{ images.0.alt }}" data-main-image>
+      {% endif %}
+    </div>
+    {% if images|length > 1 %}
+      <div class="pdp__thumbs">
+        {% for img in images %}
+          <button class="pdp__thumb{% if forloop.first %} is-active{% endif %}" type="button" data-thumb data-src="{{ img.url }}" aria-label="{{ img.alt }}">
+            <img src="{{ img.url }}" alt="">
+          </button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="pdp__info">
+    <a class="pdp__back" href="{% url 'shop' %}">&larr; {{ ui.back }}</a>
+    {% if product.category %}<p class="eyebrow">{{ product.category.name }}</p>{% endif %}
+    <h1 class="pdp__name">{{ product.name }}</h1>
+    {% if product.subtitle %}<p class="pdp__sub">{{ product.subtitle }}</p>{% endif %}
+    <p class="pdp__price">{{ site.currency }}{{ product.price|floatformat:0|intcomma }}</p>
+    {% if product.description %}<p class="pdp__desc">{{ product.description }}</p>{% endif %}
+
+    {% if product.detail_lines %}
+      <h2 class="pdp__label">{{ ui.details }}</h2>
+      <ul class="pdp__details">
+        {% for line in product.detail_lines %}
+          <li>{{ line }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <div class="enquire" id="enquire">
+      {% if sent %}
+        <p class="note" role="status">{{ ui.sent }}</p>
+      {% else %}
+        <h2 class="pdp__label">{{ ui.enquire }}</h2>
+        <form method="post" action="{% url 'product' product.slug %}#enquire" class="enq" novalidate>
+          {% csrf_token %}
+          <div class="enq__row">
+            <label class="field"><span>{{ ui.name }}</span>{{ form.name }}</label>
+            <label class="field"><span>{{ ui.email }}</span>{{ form.email }}</label>
+          </div>
+          <label class="field"><span>{{ ui.phone }}</span>{{ form.phone }}</label>
+          <label class="field"><span>{{ ui.message }}</span>{{ form.message }}</label>
+          {% if form.errors %}
+            <p class="enq__error">{{ ui.error }}</p>
+          {% endif %}
+          <button class="btn btn--dark" type="submit">{{ ui.send }}</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</article>
+
+{% if related %}
+<section class="section section--related">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="sec-title" data-reveal>{{ ui.more }}</h2>
+      <a class="link-more" href="{% url 'shop' %}" data-reveal>{{ ui.all }}<span>&rarr;</span></a>
+    </div>
+    <div class="grid-3 grid--pieces">
+      {% for p in related %}
+        <div data-reveal style="--i:{{ forloop.counter0 }}">
+          {% include "partials/card.html" with p=p %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
