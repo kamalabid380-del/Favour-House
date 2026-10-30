@@ -107,7 +107,26 @@
     </div>
   </footer>
 
+  <button class="to-top" type="button" data-to-top aria-label="Back to top" title="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
   <script src="{% static 'js/site.js' %}" defer></script>
+  <script>
+    (function () {
+      var btn = document.querySelector('[data-to-top]');
+      if (!btn) return;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function toggle() { btn.classList.toggle('is-on', window.scrollY > 400); }
+      window.addEventListener('scroll', toggle, { passive: true });
+      toggle();
+      btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      });
+    })();
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>
